@@ -1,0 +1,167 @@
+<!doctype html>
+<html>
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Pass Marks Calculator</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+        <style>
+			body {
+				width:90%;
+				min-width:400px;
+				margin:auto;
+			}
+		</style>
+	</head>
+	<body>
+		<header class="alert-info">
+        	<h1 class="text-center">Pass Mark Calculator</h1>
+        </header>
+        <section id="basicDetails">
+        	<h2>Basic Details</h2><hr>
+            
+            <!--<form class="form-inline">
+            Personal Details:
+        	<div class="form-group">
+                <input type="text" class="form-control" id="name" placeholder="Name...">
+              </div>
+              <div class="form-group">
+                <input type="email" class="form-control" id="email" placeholder="Email...">
+              </div><div class="form-group">
+                <input type="text" class="form-control" id="regNo" placeholder="Register Number...">
+               *</div>
+              </form>
+-->              <div class="row">
+              	<div class="col-sm-6">
+                	Enter Min marks for Passing in Semester out of 100: <input class="form-control" type="number" name="minMarks" id="minMarks" value="50"/>
+                (default 50 Marks to Pass)</div>
+                <div class="col-sm-6">
+                	Enter Internal Marks Weightage: <input class="form-control" type="number" name="minMarks" id="weightage" value="40"/>(default 40% Internal)
+                </div>
+              </div>
+            <br />
+          
+			<div class="row">
+            	<div class="col-sm-12">
+                	Enter Number of Subjects:
+            		<input class="form-control" type="number" name="noSubject" id="noSubject" value="6"/>(default 6 Subjects)
+                </div>
+            </div>
+            <div class="row">
+                <button class="btn btn-primary btn-block" id="next">Next</button>
+            </div>
+		</section>
+        
+        
+        
+        <section id="marksInput"><br /><h2>Internal Marks Details</h2><hr />
+        	<p>Enter Your Internal Marks of Each subject</p>
+        	<div class="row" id="marks">
+            </div>
+            <div class="row">
+            	<div class="col-xs-6">
+                	<button class="btn btn-primary btn-block" id="prev">Previous</button>
+                </div>
+                <div class="col-xs-6">
+                	<button class="btn btn-success btn-block" id="calc">Calculate</button>
+                </div>
+            </div>
+        </section>
+        <section id="resultSection">
+        	<br><h2>Calculated Results</h2><hr>
+        	<p>You Have to get a Minimum Mark as Follow to Pass</p>
+        	<div id="result">
+            </div>
+        <div class="row">
+            	<div class="col-xs-6">
+                	<button class="btn btn-primary btn-block" id="Back">Back</button>
+                </div>
+                <div class="col-xs-6">
+                	<button class="btn btn-success btn-block" id="Redo">Redo</button>
+                </div>
+            </div>
+        </section>
+        <div id="dummyFooter" style="margin-bottom:70px"></div>
+		<footer class="panel-footer navbar-fixed-bottom">
+        	<small style="float:right;">By R.Balaji, B.E. Mechanical SCSVMV</small>
+        </footer>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script type="text/javascript">
+        window.onload = function() {
+	/* var Inistialisation */
+	var minMarks = document.getElementById("minMarks");
+	var weightage = document.getElementById("weightage");
+	var subjects = document.getElementById("noSubject");
+	var sectionBasic = document.getElementById("basicDetails");
+	var sectionMarksInput = document.getElementById("marksInput");
+	var sectionResult = document.getElementById("resultSection");
+	var nextBtn = document.getElementById("next");
+	var marks = document.getElementById("marks");
+	var temp = null;
+	var result = document.getElementById("result");
+	var calc = document.getElementById("calc");
+	var prev = document.getElementById("prev");
+	/*Prelims*/
+	sectionMarksInput.setAttribute("hidden","hidden");
+	sectionResult.setAttribute("hidden","hidden");
+	/* On Click of Next Button */
+	nextBtn.onclick = function (e) {
+		closeBasicDetails();
+		marks.innerHTML = "";
+		for(var i=0; i<subjects.value ; i++){
+			temp = marks.innerHTML;
+			marks.innerHTML = temp +
+			'<input type="number" class="form-control marks" name="marks" placeholder="'+ 'Subject #' + (i+1) +'"/>';
+		}
+	}
+	/* Result */
+	calc.onclick = function (e) {
+		closeMarksDetails();
+		var subj = document.getElementsByClassName("marks");
+		var pass = 0;
+		var tmp = ' <table class="table table-bordered"><tr><th>Subject</th><th>Pass Marks</th></tr>';
+		var passS = null;
+		for(var i=1; i<=subjects.value ; i++){
+			pass = (minMarks.value - subj[i-1].value) / ( 100 - weightage.value);
+			pass = pass*100;
+			pass = pass.toFixed(1);
+			if(pass > Math.round(pass) || pass < Math.round(pass)){
+				passS = pass.toString() + " (or) <strong>" + Math.ceil(pass).toString()+"</strong>";
+			} else {
+				passS = "<strong>"+Math.ceil(pass).toString()+"</strong>";
+			}
+			tmp = tmp + '<tr><td>'+i+'</td><td>'+passS+'</td></tr>';
+		}
+		result.innerHTML = tmp + '</table>';
+	}
+	/*Extra Functions */
+	function closeBasicDetails() {
+		sectionBasic.setAttribute("hidden","hidden");
+		sectionMarksInput.removeAttribute("hidden");
+	}
+	function closeMarksDetails() {
+		sectionMarksInput.setAttribute("hidden","hidden");
+		sectionResult.removeAttribute("hidden");
+	}
+	prev.onclick = function(e) {
+		sectionMarksInput.setAttribute("hidden","hidden");
+		sectionBasic.removeAttribute("hidden");
+	}
+	
+	var redo = document.getElementById("Redo");
+	var bac = document.getElementById("Back");
+	bac.onclick = function(e) {
+		sectionResult.setAttribute("hidden","hidden");
+		sectionMarksInput.removeAttribute("hidden");
+	}
+	redo.onclick = function(e) {
+		sectionMarksInput.setAttribute("hidden","hidden");
+		sectionResult.setAttribute("hidden","hidden");
+		sectionBasic.removeAttribute("hidden");
+	}
+	
+}
+        </script>
+	</body>
+</html>
